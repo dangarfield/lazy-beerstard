@@ -1,0 +1,21 @@
+[{
+        "name": "test",
+        "synonym": ["test"]
+    },
+    {
+        "name": "Carlsberg",
+        "synonym": ["carlsberg", "AE arlsbey"]
+    },
+    {
+        "name": "Budweiser",
+        "synonym": ["budweiser", "iser"]
+    },
+    {
+        "name": "Guinness",
+        "synonym": ["guiness extra cold"]
+    },
+    {
+        "name": "Punk IPA",
+        "synonym": ["aunkls brew"]
+    }
+]

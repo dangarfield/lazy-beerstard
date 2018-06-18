@@ -1,0 +1,11 @@
+{
+    "name": "lazy-beerstard",
+    "alias": "lazy-beerstard",
+    "type": "npm",
+    "env": {
+        "LAZY_BEERSTARD_AWS_REGION": "eu-west-1",
+        "LAZY_BEERSTARD_AWS_ACCESS": "@LAZY_BEERSTARD_AWS_ACCESS",
+        "LAZY_BEERSTARD_AWS_SECRET": "@LAZY_BEERSTARD_AWS_SECRET",
+        "LAZY_BEERSTARD_PORT": 5000
+    }
+}

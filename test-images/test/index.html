@@ -1,0 +1,475 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4"
+        crossorigin="anonymous">
+    <style>
+        .card-body.map-holder {
+            padding: 0;
+        }
+
+        .map {
+            height: 300px;
+            width: 100%;
+        }
+    </style>
+
+    <title>Lazy Beerstard - Test Page</title>
+</head>
+
+<body>
+    <main role="main">
+
+        <section class="jumbotron text-center">
+            <div class="container">
+                <h1 class="jumbotron-heading">Lazy Beerstard - Calorie and Distance API examples</h1>
+                <p class="lead text-muted">This is a test page to demonstrate the server side component of the Lazy Beerstard app. This sends images
+                    to the server, the server then in turn processes the images, fetches and calculates the calorific value
+                    of your drink and then calculates the distance you must travel in order to burn off the calories</p>
+                <p>
+                    <button class="btn btn-primary begin">Begin</button>
+                </p>
+            </div>
+        </section>
+
+        <div class="album py-5 bg-light">
+            <div class="container-fluid">
+
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="card box-shadow">
+                            <img class="card-img-top" src="/budweiser.jpg" data-lat="51.959433" data-lng="-0.251449">
+                            <ul class="list-group list-group-flush">
+                            </ul>
+                            <div class="card-body">
+                                <p class="card-text">Ready...</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card box-shadow">
+                            <img class="card-img-top" src="/carlsberg.jpg" data-lat="51.949383" data-lng="-0.275732">
+                            <ul class="list-group list-group-flush">
+                            </ul>
+                            <div class="card-body">
+                                <p class="card-text">Ready...</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <div class="card box-shadow">
+                            <img class="card-img-top" src="/guinness-extra-cold.jpg" data-lat="51.946077" data-lng="-0.278749">
+                            <ul class="list-group list-group-flush">
+                            </ul>
+                            <div class="card-body">
+                                <p class="card-text">Ready...</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <div class="card box-shadow">
+                            <img class="card-img-top" src="/london-pride.jpg" data-lat="51.953527" data-lng="-0.275253">
+                            <ul class="list-group list-group-flush">
+                            </ul>
+                            <div class="card-body">
+                                <p class="card-text">Ready...</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card box-shadow">
+                            <img class="card-img-top" src="/punk-ipa.jpg" data-lat="51.943801" data-lng="-0.265170">
+                            <ul class="list-group list-group-flush">
+                            </ul>
+                            <div class="card-body">
+                                <p class="card-text">Ready...</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card box-shadow">
+                            <img class="card-img-top" src="/old-rosie.jpg" data-lat="51.980127" data-lng="-0.224889">
+                            <ul class="list-group list-group-flush">
+                            </ul>
+                            <div class="card-body">
+                                <p class="card-text">Ready...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js" crossorigin="anonymous"></script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyChfvGzXklxujKAMRzDSw315AirURM1R10"></script>
+    <script>
+        var apiKey = "AIzaSyChfvGzXklxujKAMRzDSw315AirURM1R10"
+
+        $(document).ready(function () {
+
+            // $('.begin').click(function () {
+            getCaloriesForAll()
+            // })
+
+        })
+
+        function getCaloriesForAll() {
+            $('.album img').each(function (i, img) {
+                console.log('img', img)
+                var $body = $(img).siblings('.card-body')
+                var $list = $(img).siblings('.list-group')
+
+                var home = {
+                    lat: Number($(img).attr('data-lat')),
+                    lng: Number($(img).attr('data-lng'))
+                }
+
+
+                $body.html(
+                    '<p class="card-text">Processing...<img src="https://loading.io/spinners/double-ring/index.double-ring-spinner.gif"/></p>'
+                )
+                getDataUri($(img).attr('src'), function (imageData) {
+                    console.log('imageData', imageData)
+
+                    $.post("/detect-calories-beer", {
+                        imageData: imageData,
+                        height: 1.6,
+                        weight: 60
+                    }, function (data) {
+                        console.log(data);
+
+                        console.log('data', data)
+                        displayTextData(data, $list, $body)
+                        if (!data.error) {
+                            $body.html(
+                                '<p class="card-text">Calculating map directions...<img src="https://loading.io/spinners/double-ring/index.double-ring-spinner.gif"/></p>'
+                            )
+                            generateMap(home, data.distance, $body, i)
+                        } else {
+                            $body.remove()
+                        }
+
+
+                    }, "json");
+                });
+
+            })
+        }
+
+
+
+
+        var earth_radius = 3960.0
+        var degrees_to_radians = Math.PI / 180
+        var radians_to_degrees = 180 / Math.PI
+
+        function changeInLat(miles) {
+            return (miles / earth_radius) * radians_to_degrees
+        }
+
+        function changeInLng(latitude, miles) {
+            r = earth_radius * Math.cos(latitude * degrees_to_radians)
+            return (miles / r) * radians_to_degrees
+        }
+
+        function getBoundingBoxPoints(lat, lng, distance) {
+            // delta will be 4 points around centre that makes a square of the set distance
+            var delta = distance / 6
+            var latDiff = changeInLat(delta)
+            var lngDiff = changeInLng(lat, delta)
+            console.log('fixed', earth_radius, degrees_to_radians, radians_to_degrees)
+            console.log('delta', delta, latDiff, lngDiff)
+
+            return {
+                TL: {
+                    lat: Number((lat + latDiff).toFixed(6)),
+                    lng: Number((lng - lngDiff).toFixed(6))
+                },
+                TM: {
+                    lat: Number((lat + latDiff).toFixed(6)),
+                    lng: Number((lng).toFixed(6))
+                },
+                TR: {
+                    lat: Number((lat + latDiff).toFixed(6)),
+                    lng: Number((lng + lngDiff).toFixed(6))
+                },
+
+                ML: {
+                    lat: Number((lat).toFixed(6)),
+                    lng: Number((lng - lngDiff).toFixed(6))
+                },
+                MR: {
+                    lat: Number((lat).toFixed(6)),
+                    lng: Number((lng + lngDiff).toFixed(6))
+                },
+
+                BL: {
+                    lat: Number((lat - latDiff).toFixed(6)),
+                    lng: Number((lng - lngDiff).toFixed(6))
+                },
+                BM: {
+                    lat: Number((lat - latDiff).toFixed(6)),
+                    lng: Number((lng).toFixed(6))
+                },
+                BR: {
+                    lat: Number((lat - latDiff).toFixed(6)),
+                    lng: Number((lng + lngDiff).toFixed(6))
+                }
+            }
+
+        }
+
+        async function generateMap(home, distance, $body, i) {
+
+            // Create 3 way points that roughly make a triangle with a perimeter of the distance required in a certain direction eg TL TR BR BL
+            var boundingBox = getBoundingBoxPoints(home.lat, home.lng, distance)
+            console.log('boundingBox', boundingBox)
+
+            // Temp - render map with all points
+            $body.html('<div id="map-' + i + '" class="map"></div>')
+            $body.addClass('map-holder')
+            var map = new google.maps.Map(document.getElementById('map-' + i), {
+                zoom: 15,
+                center: home
+            });
+            // The marker, positioned at home
+            // var marker = new google.maps.Marker({
+            //     position: home,
+            //     map: map
+            // });
+            // Object.keys(boundingBox).forEach(function (key) {
+            //     var marker = new google.maps.Marker({
+            //         position: boundingBox[key],
+            //         map: map,
+            //         label: 'A'
+            //     });
+            // })
+
+
+
+
+            var waypointArray = []
+            waypointArray.push([boundingBox.TL, boundingBox.ML])
+            waypointArray.push([boundingBox.ML, boundingBox.TR])
+            waypointArray.push([boundingBox.TR, boundingBox.MR])
+            waypointArray.push([boundingBox.MR, boundingBox.MR])
+            waypointArray.push([boundingBox.BR, boundingBox.BM])
+            waypointArray.push([boundingBox.BM, boundingBox.BL])
+            waypointArray.push([boundingBox.BL, boundingBox.ML])
+            waypointArray.push([boundingBox.ML, boundingBox.TL])
+
+            var directions = await getDirections(home, waypointArray)
+            console.log('directions', directions)
+
+            filterDirectionsForBestLeg(directions, distance)
+
+            renderMapDirections(directions, map, $body)
+
+        }
+
+        function renderMapDirections(directions, map, $body) {
+            var directionsDisplay = new google.maps.DirectionsRenderer;
+            directionsDisplay.setMap(map);
+            directionsDisplay.setDirections(directions);
+
+            var waypointsParam = []
+            directions.routes[0].legs[0].via_waypoint.forEach(function (waypoint) {
+                waypointsParam.push(waypoint.location.lat() + ',' + waypoint.location.lng())
+            })
+
+            console.log('LAT', directions.routes[0].legs[0].start_location.lat)
+            var deepLinkUrl = 'https://www.google.com/maps/dir/?api=1'
+            deepLinkUrl = deepLinkUrl + '&origin=' + directions.routes[0].legs[0].start_location.lat() + ',' +
+                directions
+                .routes[0].legs[0].start_location.lng()
+            deepLinkUrl = deepLinkUrl + '&destination=' + directions.routes[0].legs[0].end_location.lat() + ',' +
+                directions.routes[0].legs[0].end_location.lng()
+            deepLinkUrl = deepLinkUrl + '&waypoints=' + waypointsParam.join('|')
+            deepLinkUrl = deepLinkUrl + '&travelmode=walking'
+
+
+            var mapDetailHtml = ''
+            mapDetailHtml = mapDetailHtml + '<ul class="list-group list-group-flush">'
+            mapDetailHtml = mapDetailHtml + '  <li class="list-group-item">Map distance: <span class="float-right">' +
+                directions.routes[0].legs[0].distance.text + 'les</span></li>'
+            mapDetailHtml = mapDetailHtml +
+                '  <li class="list-group-item">Map walking time: <span class="float-right">' + directions.routes[0].legs[
+                    0].duration.text + '</span></li>'
+            mapDetailHtml = mapDetailHtml +
+                '  <li class="list-group-item"><span class="float-right"><a class="btn btn-primary" target="_blank" href="' +
+                deepLinkUrl +
+                '">Directions</a></span></li>'
+            mapDetailHtml = mapDetailHtml + '</ul>'
+            $body.after(mapDetailHtml)
+        }
+
+        function filterDirectionsForBestLeg(directions, distance) {
+            var legs = directions.routes[0].legs
+            var distanceMetres = Math.round(distance * 1609.344)
+            directions.routes[0].legs.sort(function (a, b) {
+                return Math.abs(a.distance.value - distanceMetres) > Math.abs(b.distance.value - distanceMetres)
+            });
+            directions.routes[0].legs.splice(1);
+            delete directions.routes[0].bounds
+        }
+        async function getDirections(home, waypointArray) {
+            var stopOverWayPoints = []
+            waypointArray.forEach(function (waypointArrayLeg) {
+                waypointArrayLeg.forEach(function (waypoint) {
+                    stopOverWayPoints.push({
+                        location: waypoint,
+                        stopover: false
+                    })
+                })
+                stopOverWayPoints.push({
+                    location: home,
+                    stopover: true
+                })
+            })
+            stopOverWayPoints.pop()
+
+            return new Promise(resolve => {
+                var directionsService = new google.maps.DirectionsService;
+
+                directionsService.route({
+                    origin: home,
+                    destination: home,
+                    waypoints: stopOverWayPoints,
+                    optimizeWaypoints: false,
+                    travelMode: 'WALKING',
+                    unitSystem: google.maps.UnitSystem.IMPERIAL
+                }, function (response, status) {
+                    console.log('directionsService', status, response)
+                    if (status === 'OK') {
+                        resolve(response)
+                    } else {
+                        window.alert('Directions request failed due to ' + status);
+                    }
+                });
+
+            })
+        }
+        async function getBoundingBoxSnappedPoints(boundingBox) {
+            return new Promise(resolve => {
+                var pointsArray = []
+                pointsArray.push(boundingBox.TL.lat + ',' + boundingBox.TL.lng)
+                pointsArray.push(boundingBox.TM.lat + ',' + boundingBox.TM.lng)
+                pointsArray.push(boundingBox.TR.lat + ',' + boundingBox.TR.lng)
+
+                pointsArray.push(boundingBox.ML.lat + ',' + boundingBox.ML.lng)
+                pointsArray.push(boundingBox.MR.lat + ',' + boundingBox.MR.lng)
+
+                pointsArray.push(boundingBox.BL.lat + ',' + boundingBox.BL.lng)
+                pointsArray.push(boundingBox.BM.lat + ',' + boundingBox.BM.lng)
+                pointsArray.push(boundingBox.BR.lat + ',' + boundingBox.BR.lng)
+
+                console.log('pointsArray', pointsArray)
+                var points = pointsArray.join('|')
+
+                $.get('https://roads.googleapis.com/v1/nearestRoads', {
+                    key: apiKey,
+                    points: points
+                }, function (data) {
+                    var coords = []
+                    console.log(data)
+                    var boundingBoxSnapped = {}
+                    boundingBoxSnapped.TL = {
+                        lat: data.snappedPoints.filter(d => d.originalIndex == 1)[0].location.latitude,
+                        lng: data.snappedPoints.filter(d => d.originalIndex == 1)[0].location.longitude
+                    }
+                    boundingBoxSnapped.TM = {
+                        lat: data.snappedPoints.filter(d => d.originalIndex == 2)[0].location.latitude,
+                        lng: data.snappedPoints.filter(d => d.originalIndex == 2)[0].location.longitude
+                    }
+                    boundingBoxSnapped.TR = {
+                        lat: data.snappedPoints.filter(d => d.originalIndex == 3)[0].location.latitude,
+                        lng: data.snappedPoints.filter(d => d.originalIndex == 3)[0].location.longitude
+                    }
+
+                    boundingBoxSnapped.ML = {
+                        lat: data.snappedPoints.filter(d => d.originalIndex == 4)[0].location.latitude,
+                        lng: data.snappedPoints.filter(d => d.originalIndex == 4)[0].location.longitude
+                    }
+                    boundingBoxSnapped.MR = {
+                        lat: data.snappedPoints.filter(d => d.originalIndex == 5)[0].location.latitude,
+                        lng: data.snappedPoints.filter(d => d.originalIndex == 5)[0].location.longitude
+                    }
+
+                    boundingBoxSnapped.BL = {
+                        lat: data.snappedPoints.filter(d => d.originalIndex == 6)[0].location.latitude,
+                        lng: data.snappedPoints.filter(d => d.originalIndex == 6)[0].location.longitude
+                    }
+                    boundingBoxSnapped.BM = {
+                        lat: data.snappedPoints.filter(d => d.originalIndex == 7)[0].location.latitude,
+                        lng: data.snappedPoints.filter(d => d.originalIndex == 7)[0].location.longitude
+                    }
+                    boundingBoxSnapped.BR = {
+                        lat: data.snappedPoints.filter(d => d.originalIndex == 1)[0].location.latitude,
+                        lng: data.snappedPoints.filter(d => d.originalIndex == 1)[0].location.longitude
+                    }
+                    resolve(boundingBoxSnapped)
+                });
+            })
+        }
+
+        function processSnapToRoadResponse(data) {
+            snappedCoordinates = [];
+            placeIdArray = [];
+            for (var i = 0; i < data.snappedPoints.length; i++) {
+                var latlng = new google.maps.LatLng(
+                    data.snappedPoints[i].location.latitude,
+                    data.snappedPoints[i].location.longitude);
+                snappedCoordinates.push(latlng);
+                placeIdArray.push(data.snappedPoints[i].placeId);
+            }
+        }
+
+        function displayTextData(data, $list, $body) {
+            $list.append(
+                '<li class="list-group-item">Name: <span class="float-right">' +
+                data.name +
+                '</span></li>')
+            if (data.calories) {
+                $list.append(
+                    '<li class="list-group-item">Calories: <span class="float-right">' +
+                    data.calories +
+                    '</span></li>')
+            }
+            if (data.distance) {
+                $list.append(
+                    '<li class="list-group-item">Distance: <span class="float-right">' +
+                    data.distance + ' miles</span></li>')
+            }
+            if (data.error) {
+                $list.append(
+                    '<li class="list-group-item">Distance: <span class="float-right">' +
+                    data.error + ' miles</span></li>')
+            }
+
+        }
+
+        function getDataUri(url, callback) {
+            var image = new Image();
+            image.onload = function () {
+                var canvas = document.createElement('canvas');
+                canvas.width = this.naturalWidth;
+                canvas.height = this.naturalHeight;
+                canvas.getContext('2d').drawImage(this, 0, 0);
+                callback(canvas.toDataURL('image/jpg'));
+            };
+            image.src = url;
+        }
+    </script>
+</body>
+
+</html>
