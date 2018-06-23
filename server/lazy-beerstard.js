@@ -8,10 +8,15 @@ const imageDataUri = require('image-data-uri')
 const _ = require('lodash')
 const cheerio = require('cheerio')
 const request = require('request')
+// const multer = require('multer')
+const mapGenerator = require('./map-generator.js')
 
 console.log('----- Lazy Beerstard app init')
 
 app.use(express.static('test-images')) // Purely for show and tell test
+
+// const storage = multer.memoryStorage()
+// const upload = multer({ storage })
 
 const AWS_REGION = process.env.LAZY_BEERSTARD_AWS_REGION
 const AWS_ACCESS = process.env.LAZY_BEERSTARD_AWS_ACCESS
@@ -49,26 +54,45 @@ app.use(bodyParser.urlencoded({
 }))
 
 // Cross domain at some point?
-// app.use(function (req, res, next) {
-//   res.header('Access-Control-Allow-Origin', ['cross-domain.com'])
-//   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept')
-//   next()
-// })
+app.use(function (req, res, next) {
+  res.header('Access-Control-Allow-Origin', ['*'])
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept')
+  next()
+})
 
 app.get('/', (req, res) => res.send('Hello lazy beerstard root!'))
 
+app.get('/get', (req, res) => {
+  console.log('get test', req.body, req.params)
+  return res.send('Hello lazy beerstard root!')
+})
+
 app.post('/detect-calories-beer', async function (req, res) {
-  console.log('Incoming monitor request') //, req.body)
+  console.log('Incoming calories request') //, req.body)
   // TODO Validate request fields
 
   var height = req.body.height
   var weight = req.body.weight
-  var img = imageDataUri.decode(req.body.imageData).dataBuffer
-  // console.log('req.body.imageData', req.body.imageData, img)
+  console.log('imageData', req.body)
+  var rawImg = req.body.imageData.replace(/(?:\r\n|\r|\n)/g, '')
 
-  var result = await processCaloriesRequest(img, height, weight, res)
+  var img = imageDataUri.decode(rawImg).dataBuffer
+  console.log('req.body.imageData', rawImg, img)
+
+  var result = await processCaloriesRequest(img, height, weight)
 
   res.json(result)
+})
+
+app.get('/map-data', async function (req, res) {
+  console.log('Incoming map request')
+  var lat = Number(req.query.lat)
+  var lng = Number(req.query.lng)
+  var distance = Number(req.query.distance)
+  console.log('data', lat, lng, distance)
+  var map = await mapGenerator.generateMap({lat: lat, lng: lng}, distance)
+  console.log('map', map)
+  res.json(map)
 })
 
 async function processCaloriesRequest (img, height, weight) {
