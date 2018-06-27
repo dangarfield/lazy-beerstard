@@ -50,6 +50,7 @@ Everything works really well on `snack.expo.io` apart from the importing of the 
 - After saving any changes for the mobile project in your IDE (use any), it will live reload to your phone. Somethings it takes a few seconds, or just change something else on a different line to trigger a change
 
 ### Still to do
+- Better handle location services and turned off / permissions more gracefully handled and earlier, maybe on the first click / app load
 - Make the app look good (inspiration from Kitten Tricks)
 - Set boundary points and lines for maps
 - Add analytics for negatively scanned images, eg, to S3 or locally on now
