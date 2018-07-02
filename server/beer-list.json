@@ -17,5 +17,13 @@
     {
         "name": "Punk IPA",
         "synonym": ["aunkls brew"]
+    },
+    {
+        "name": "Red Wine",
+        "synonym": ["red wine"]
+    },
+    {
+        "name": "White Wine",
+        "synonym": ["white wine"]
     }
 ]

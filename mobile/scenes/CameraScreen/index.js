@@ -1,7 +1,7 @@
 import React from 'react';
-import { Text, View, TouchableOpacity } from 'react-native';
+import { Text, View, TouchableOpacity, StyleSheet, Image } from 'react-native';
 import { Camera, Permissions, ImagePicker } from 'expo';
-
+import { Button } from 'react-native-elements'
 export default class CameraExample extends React.Component {
   state = {
     hasCameraPermission: null,
@@ -10,7 +10,7 @@ export default class CameraExample extends React.Component {
   };
 
   async componentWillMount() {
-    const { status } = await Permissions.askAsync(Permissions.CAMERA, Permissions.CAMERA_ROLL);
+    const { status } = await Permissions.askAsync(Permissions.CAMERA);
     this.setState({ hasCameraPermission: status === 'granted' });
   }
   takePicture = async () => {
@@ -77,65 +77,15 @@ export default class CameraExample extends React.Component {
             <View
               style={{
                 flex: 1,
-                backgroundColor: 'transparent',
-                flexDirection: 'row',
+                backgroundColor: 'transparent'
               }}>
               <TouchableOpacity
-                style={{
-                  flex: 0.1,
-                  alignSelf: 'flex-end',
-                  alignItems: 'center',
-                }}
-                onPress={() => {
-                  this.setState({
-                    type: this.state.type === Camera.Constants.Type.back
-                      ? Camera.Constants.Type.front
-                      : Camera.Constants.Type.back,
-                  });
-                }}>
-                <Text
-                  style={{ fontSize: 18, marginBottom: 10, color: 'white' }}>
-                  {' '}Flip{' '}
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={{
-                  flex: 0.1,
-                  alignSelf: 'flex-end',
-                  alignItems: 'center',
-                }}
-                onPress={() => this.props.navigation.navigate('homeStack', ({name: 'Home'}))}>
-                <Text
-                  style={{ fontSize: 18, marginBottom: 10, color: 'white' }}>
-                  {' '}Home{' '}
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={{
-                  flex: 0.1,
-                  alignSelf: 'flex-end',
-                  alignItems: 'center',
-                }}
-                onPress={() => this.props.navigation.navigate('resultsStack', ({name: 'Results'}))}>
-                <Text
-                  style={{ fontSize: 18, marginBottom: 10, color: 'white' }}>
-                  {' '}Results{' '}
-                </Text>
-              </TouchableOpacity>
-
-
-              <TouchableOpacity
-                style={{
-                  flex: 0.1,
-                  alignSelf: 'flex-end',
-                  alignItems: 'center',
-                }}
+                style={styles.actionButton}
                 onPress={this.takePicture}>
-                <Text
-                  style={{ fontSize: 18, marginBottom: 10, color: 'red' }}>
-                  {' '}{this.state.status}{' '}
-                </Text>
+                <Image source={CAMERA_BUTTON_IMAGE} />
+
               </TouchableOpacity>
+
             </View>
           </Camera>
         </View>
@@ -143,3 +93,15 @@ export default class CameraExample extends React.Component {
     }
   }
 }
+const CAMERA_BUTTON_IMAGE = require('../../assets/images/cameraButton.png')
+const styles = StyleSheet.create({
+  actionButton: {
+        position: 'absolute',
+        bottom: 25,
+        padding: 16,
+        right: 20,
+        left: 20,
+        borderRadius: 20,
+        alignItems: 'center'
+  },
+});

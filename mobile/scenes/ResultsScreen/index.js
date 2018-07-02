@@ -2,11 +2,12 @@ import * as React from 'react';
 import {
   TouchableOpacity,
   StyleSheet,
-  Text,
   View,
   Image,
   Platform,
-  Linking
+  Linking,
+  ImageBackground,
+  Dimensions
 } from 'react-native';
 import MapView from 'react-native-maps'
 import {
@@ -16,6 +17,7 @@ import {
   Location,
   Permissions,
 } from 'expo';
+import { Button, Card, Text } from 'react-native-elements'
 import MapViewDirections from 'react-native-maps-directions';
 
 // import { generateMap } from '../../components/MapGenerator';
@@ -123,37 +125,50 @@ class Results extends React.Component {
   renderLocation = () => {
     return (
       <View>
-        <Text>Find your location...</Text>
+        <Card
+          title='Finding your location...'>
+        </Card>
       </View>
     );
   };
   renderProcessing = () => {
     return (
       <View>
-        <Text>Photo: {this.state.photo}</Text>
+        {/* <Text>Photo: {this.state.photo}</Text>
         <Image
           style={{ width: 150, height: 150 }}
           source={{ uri: this.state.photo }}
         />
         <Text>ImageData: {this.state.imageData}</Text>
-        <Text>Processing...</Text>
+        <Text>Processing...</Text> */}
+        <Card
+          title='Processing image...'>
+        </Card>
       </View>
     );
   };
   renderUploading = () => {
     return (
       <View>
-        <Text>Uploading...</Text>
+        <Card
+          title='Uploading image...'>
+        </Card>
       </View>
     );
   };
   renderGenerating = () => {
     return (
       <View>
-        <Text>Generating map...</Text>
+        {/* <Text>Generating map...</Text>
         <Text>Name: {this.state.data.name}</Text>
         <Text>Calories: {this.state.data.calories}</Text>
-        <Text>Distance: {this.state.data.distance}</Text>
+        <Text>Distance: {this.state.data.distance}</Text> */}
+        <Card
+          title='Generating map'>
+          <Text style={styles.instructionsText}>
+            Looking for a {this.state.data.distance} route
+          </Text>
+        </Card>
       </View>
     );
   };
@@ -187,11 +202,8 @@ class Results extends React.Component {
     console.log('renderDone data', origin, destination, initialRegion, waypoints)
     return (
       <View>
-        <Text>Done...</Text>
-        <Text>Name: {this.state.data.name}</Text>
-        <Text>Calories: {this.state.data.calories}</Text>
-        <Text>Distance: {this.state.data.distance}</Text>
-        <Text>Directions: {this.state.directions.distance.text} in {this.state.directions.duration.text}</Text>
+        <Text h3 style={styles.titleText}>{this.state.data.name}</Text>
+        <Text style={styles.titleText}>Burn off {this.state.data.calories} calories walking {this.state.directions.distance.text} in {this.state.directions.duration.text}</Text>
 
         <MapView
           style={styles.map}
@@ -226,66 +238,110 @@ class Results extends React.Component {
 
 
 
-        <TouchableOpacity
+        {/* <TouchableOpacity
           onPress={() =>
             Linking.openURL(this.state.directions.deeplink)
           }>
           <Text>Deeplink: {this.state.directions.deeplink}</Text>
-        </TouchableOpacity>
-
+        </TouchableOpacity> */}
+        <Button
+              title='Open in Google Maps'
+              activeOpacity={1}
+              underlayColor="transparent"
+              onPress={() => Linking.openURL(this.state.directions.deeplink)}
+              buttonStyle={{height: 50, backgroundColor: 'transparent', borderWidth: 2, borderColor: 'white', borderRadius: 30, marginTop: 20}}
+              containerStyle={{marginVertical: 10}}
+              titleStyle={{fontWeight: 'bold', color: 'white'}}
+            />
+        <Button
+            title='Start again'
+            activeOpacity={1}
+            underlayColor="transparent"
+            onPress={() => this.props.navigation.navigate('homeStack', ({name: 'Home'}))}
+            buttonStyle={{height: 50, backgroundColor: 'transparent', borderWidth: 2, borderColor: 'white', borderRadius: 30, marginTop: 20}}
+            containerStyle={{marginVertical: 10}}
+            titleStyle={{fontWeight: 'bold', color: 'white'}}
+          />
       </View>
     );
   };
   renderError = () => {
     return (
       <View>
-        <Text>
+        <Card
+          title='Error!'
+          image={{ uri: this.state.photo }}
+          imageProps={{resizeMode: 'contain'}}>
+          <Text style={styles.instructionsText}>
           Error: {this.state.data.error} - {this.state.data.name}
-        </Text>
-        <Image
-          style={{ width: 150, height: 150 }}
-          source={{ uri: this.state.photo }}
-        />
+          </Text>
+        </Card>
+        <Button
+              title='Start again'
+              activeOpacity={1}
+              underlayColor="transparent"
+              onPress={() => this.props.navigation.navigate('homeStack', ({name: 'Home'}))}
+              buttonStyle={{height: 50, backgroundColor: 'transparent', borderWidth: 2, borderColor: 'white', borderRadius: 30, marginTop: 20}}
+              containerStyle={{marginVertical: 10}}
+              titleStyle={{fontWeight: 'bold', color: 'white'}}
+            />
       </View>
     );
   };
   render() {
     return (
       <View style={styles.container}>
-        <Text>Results Screen</Text>
-        <Text>Status: {this.state.status}</Text>
-        <Text>Name: {this.state.name}</Text>
+        <ImageBackground
+            source={BG_IMAGE}
+            style={styles.bgImage}
+          >
+          {/* <Text>Results Screen</Text>
+          <Text>Status: {this.state.status}</Text>
+          <Text>Name: {this.state.name}</Text> */}
 
-        {this.state.status === 'location' && this.renderLocation()}
-        {this.state.status === 'processing' && this.renderProcessing()}
-        {this.state.status === 'uploading' && this.renderUploading()}
-        {this.state.status === 'generating' && this.renderGenerating()}
+          {this.state.status === 'location' && this.renderLocation()}
+          {this.state.status === 'processing' && this.renderProcessing()}
+          {this.state.status === 'uploading' && this.renderUploading()}
+          {this.state.status === 'generating' && this.renderGenerating()}
 
-        {this.state.status === 'done' && this.renderDone()}
-        {this.state.status === 'error' && this.renderError()}
+          {this.state.status === 'done' && this.renderDone()}
+          {this.state.status === 'error' && this.renderError()}
 
-        <TouchableOpacity
-          onPress={() =>
-            this.props.navigation.navigate('homeStack', { name: 'Home' })
-          }>
-          <Text style={styles.text}>Back home</Text>
-        </TouchableOpacity>
+
+
+        </ImageBackground>
       </View>
     );
   }
 }
 
 export default Results;
-
-const $colorWhite = '#fff';
+const BG_IMAGE = require('../../assets/images/bg_abstract1.jpg')
+export const { width, height } = Dimensions.get('window')
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: $colorWhite,
-    alignItems: 'center',
+    backgroundColor: 'white'
   },
   map: {
-    width: 250,
-    height: 250,
+    width: width,
+    height: width,
+  },
+  bgImage: {
+    flex: 1,
+    top: 0,
+    left: 0,
+    width,
+    height,
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  instructionsText: {
+    marginBottom: 10
+  },
+  titleText: {
+    color: 'white',
+    paddingLeft: 10,
+    paddingRight: 10
   }
 });
