@@ -1,6 +1,6 @@
 import React from 'react';
 import { Text, View, TouchableOpacity, StyleSheet, Image } from 'react-native';
-import { Camera, Permissions, ImagePicker } from 'expo';
+import { Camera, Permissions } from 'expo';
 import { Button } from 'react-native-elements'
 export default class CameraExample extends React.Component {
   state = {

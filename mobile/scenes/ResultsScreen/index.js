@@ -9,16 +9,15 @@ import {
   ImageBackground,
   Dimensions
 } from 'react-native';
-import MapView from 'react-native-maps'
 import {
   FileSystem,
   ImageManipulator,
   Constants,
   Location,
   Permissions,
+  MapView
 } from 'expo';
 import { Button, Card, Text } from 'react-native-elements'
-import MapViewDirections from 'react-native-maps-directions';
 
 // import { generateMap } from '../../components/MapGenerator';
 
@@ -45,7 +44,20 @@ class Results extends React.Component {
         });
       }
       console.log('getting location');
-      let location = await Location.getCurrentPositionAsync({});
+      let location = await Location.getCurrentPositionAsync();
+      // For some reason, my phone is taking ages to get the location, faking it for quick testing (TUI Office)
+      // let location = {
+      //   "coords":  {
+      //     "accuracy": 16.788000106811523,
+      //     "altitude": 201.1999969482422,
+      //     "heading": 0,
+      //     "latitude": 51.887725,
+      //     "longitude": -0.370296,
+      //     "speed": 0,
+      //   },
+      //   "mocked": false,
+      //   "timestamp": 1530614462457,
+      // }
       console.log('location', location);
       this.setState({ status: 'processing', location: location });
 
@@ -173,25 +185,22 @@ class Results extends React.Component {
     );
   };
   renderDone = () => {
-    const GOOGLE_MAPS_APIKEY = 'AIzaSyChfvGzXklxujKAMRzDSw315AirURM1R10';
-
-
-    // const origin = {latitude:this.state.directions.origin.lat, longitude:this.state.directions.origin.lng};
-    // const destination = {latitude:this.state.directions.destination.lat, longitude:this.state.directions.destination.lng};
+    const origin = {latitude:this.state.directions.origin.lat, longitude:this.state.directions.origin.lng};
+    const destination = {latitude:this.state.directions.destination.lat, longitude:this.state.directions.destination.lng};
     // const initialRegion = {
     //   latitude: this.state.directions.origin.lat,
     //   longitude: this.state.directions.origin.lng,
     //   latitudeDelta: 0.0922,
     //   longitudeDelta: 0.0421
     // }
-    const origin = {latitude: 37.3318456, longitude: -122.0296002};
-    const destination = {latitude: 37.771707, longitude: -122.4053769};
-    const initialRegion = {
-        latitude: 37.3318456,
-        longitude: -122.0296002,
-        latitudeDelta: 0.0922,
-        longitudeDelta: 0.0421
-      }
+    // const origin = {latitude: 37.3318456, longitude: -122.0296002};
+    // const destination = {latitude: 37.771707, longitude: -122.4053769};
+    // const initialRegion = {
+    //     latitude: 37.3318456,
+    //     longitude: -122.0296002,
+    //     latitudeDelta: 0.0922,
+    //     longitudeDelta: 0.0421
+    //   }
     const description = this.state.directions.duration.text + ' -> ' + this.state.directions.distance.text + ' -> ' + this.state.data.calories + ' calories'
 
     // let waypoints = [{latitude:this.state.directions.waypoints[0].lat, longitude:this.state.directions.waypoints[0].lng}]
@@ -199,7 +208,7 @@ class Results extends React.Component {
     this.state.directions.waypoints.forEach(function(waypoint) {
       waypoints.push({latitude:waypoint.lat, longitude:waypoint.lng})
     })
-    console.log('renderDone data', origin, destination, initialRegion, waypoints)
+    console.log('renderDone data', origin, destination, waypoints)
     return (
       <View>
         <Text h3 style={styles.titleText}>{this.state.data.name}</Text>
@@ -207,18 +216,13 @@ class Results extends React.Component {
 
         <MapView
           style={styles.map}
-          initialRegion={{
-            latitude: this.state.directions.origin.lat,
-            longitude: this.state.directions.origin.lng,
-            latitudeDelta: 0.0922,
-            longitudeDelta: 0.0421,
-          }}>
+          initialRegion={this.state.directions.initialRegion}>
           <MapView.Marker
             coordinate={{latitude:this.state.directions.origin.lat, longitude:this.state.directions.origin.lng}}
             title='You are here'
             description={description}
           />
-          <MapView.Marker
+          {/* <MapView.Marker
             coordinate={{latitude:this.state.directions.waypoints[0].lat, longitude:this.state.directions.waypoints[0].lng}}
             title='Waypoint 1'
             description='Waypoint 1'
@@ -227,13 +231,14 @@ class Results extends React.Component {
             coordinate={{latitude:this.state.directions.waypoints[1].lat, longitude:this.state.directions.waypoints[1].lng}}
             title='Waypoint 2'
             description='Waypoint 2'
-          />
-          <MapViewDirections
-            origin={{latitude:this.state.directions.origin.lat, longitude:this.state.directions.origin.lng}}
-            destination={{latitude:this.state.directions.destination.lat, longitude:this.state.directions.destination.lng}}
-            waypoints={waypoints}
-            apikey={GOOGLE_MAPS_APIKEY}
-          />
+          /> */}
+
+          <MapView.Polyline
+          coordinates={this.state.directions.polyline}
+          strokeColor="#000"
+          strokeWidth={3}
+        />
+
         </MapView>
 
 
@@ -308,7 +313,6 @@ class Results extends React.Component {
           {this.state.status === 'error' && this.renderError()}
 
 
-
         </ImageBackground>
       </View>
     );
@@ -342,6 +346,8 @@ const styles = StyleSheet.create({
   titleText: {
     color: 'white',
     paddingLeft: 10,
-    paddingRight: 10
+    paddingRight: 10,
+    justifyContent: 'center',
+    alignItems: 'center'
   }
 });

@@ -73,11 +73,11 @@ app.post('/detect-calories-beer', async function (req, res) {
 
   var height = req.body.height
   var weight = req.body.weight
-  console.log('imageData', req.body)
+  // console.log('imageData', req.body)
   var rawImg = req.body.imageData.replace(/(?:\r\n|\r|\n)/g, '')
 
   var img = imageDataUri.decode(rawImg).dataBuffer
-  console.log('req.body.imageData', rawImg, img)
+  // console.log('req.body.imageData', rawImg, img)
 
   var result = await processCaloriesRequest(img, height, weight)
 

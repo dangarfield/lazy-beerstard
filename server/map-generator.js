@@ -253,12 +253,55 @@ function filterDirectionsForBestLeg (directions, distance) {
     waypoints.push(waypoint.location)
   })
 
+  // Get steps for drawing polylines
+  console.log('directions.json.routes[0].legs[0]', directions.json.routes[0].legs[0])
+  var polyline = []
+
+  var initialRegion = {}
+  initialRegion.lats = [directions.json.routes[0].legs[0].start_location.lat]
+  initialRegion.lngs = [directions.json.routes[0].legs[0].start_location.lng]
+
+  directions.json.routes[0].legs[0].steps.forEach(function (step) {
+    let polylineArray = decodePath(step.polyline.points)
+    polylineArray.forEach(function (part, i) {
+      polyline.push({
+        latitude: part.lat,
+        longitude: part.lng
+      })
+      initialRegion.lats.push(part.lat)
+      initialRegion.lngs.push(part.lng)
+    })
+    // console.log('polylineArray', polylineArray)
+  })
+
+  // Get coordinates for initial region
+  initialRegion.lats.sort(function (a, b) { return a - b })
+  initialRegion.lngs.sort(function (a, b) { return a - b })
+  initialRegion.latMin = initialRegion.lats[0]
+  initialRegion.latMax = initialRegion.lats[initialRegion.lats.length - 1]
+  initialRegion.lngMin = initialRegion.lngs[0]
+  initialRegion.lngMax = initialRegion.lngs[initialRegion.lngs.length - 1]
+  initialRegion.latitudeDelta = Number((Math.abs(initialRegion.latMax - initialRegion.latMin)).toFixed(6))
+  initialRegion.longitudeDelta = Number((Math.abs(initialRegion.lngMax - initialRegion.lngMin)).toFixed(6))
+  initialRegion.latitude = Number((initialRegion.latMax - (initialRegion.latitudeDelta / 2)).toFixed(6))
+  initialRegion.longitude = Number((initialRegion.lngMax - (initialRegion.longitudeDelta / 2)).toFixed(6))
+  console.log('initialRegion', initialRegion)
+  delete initialRegion.lats
+  delete initialRegion.lngs
+  delete initialRegion.latMin
+  delete initialRegion.latMax
+  delete initialRegion.lngMin
+  delete initialRegion.lngMax
+  console.log('initialRegion', initialRegion)
   var result = {
     origin: directions.json.routes[0].legs[0].start_location,
     destination: directions.json.routes[0].legs[0].end_location,
     waypoints: waypoints,
     distance: directions.json.routes[0].legs[0].distance,
-    duration: directions.json.routes[0].legs[0].duration
+    duration: directions.json.routes[0].legs[0].duration,
+    // steps: directions.json.routes[0].legs[0].steps,
+    polyline: polyline,
+    initialRegion: initialRegion
   }
   console.log('5c filterDirectionsForBestLeg result')
   return result
@@ -281,4 +324,38 @@ function createDeepLinkurl (result) {
   result.deeplink = url
   console.log('6b createDeepLinkurl return')
   return result
+}
+
+function decodePath (encodedPath) {
+  var len = encodedPath.length || 0
+  var path = new Array(Math.floor(encodedPath.length / 2))
+  var index = 0
+  var lat = 0
+  var lng = 0
+
+  for (var pointIndex = 0; index < len; ++pointIndex) {
+    var result = 1
+    var shift = 0
+    var b
+    do {
+      b = encodedPath.charCodeAt(index++) - 63 - 1
+      result += b << shift
+      shift += 5
+    } while (b >= 0x1f)
+    lat += ((result & 1) ? ~(result >> 1) : (result >> 1))
+
+    result = 1
+    shift = 0
+    do {
+      b = encodedPath.charCodeAt(index++) - 63 - 1
+      result += b << shift
+      shift += 5
+    } while (b >= 0x1f)
+    lng += ((result & 1) ? ~(result >> 1) : (result >> 1))
+
+    path[pointIndex] = {lat: lat * 1e-5, lng: lng * 1e-5}
+  }
+  path.length = pointIndex
+
+  return path
 }
