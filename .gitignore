@@ -74,4 +74,5 @@ typings/
 
 .secrets.sh
 .DS_Store
-.expo
+mobile/.expo
+build

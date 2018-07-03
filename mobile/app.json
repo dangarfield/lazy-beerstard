@@ -1,28 +1,23 @@
 {
   "expo": {
-    "name": "lazy-beerstard",
+    "name": "Lazy Beerstard",
     "description": "No description",
-    "slug": "snack-r10vu2u-7",
-    "privacy": "unlisted",
-    "sdkVersion": "28.0.0",
-    "version": "1.0.0",
+    "slug": "lazy-beerstard",
+    "sdkVersion": "25.0.0",
+    "version": "0.1.0",
     "orientation": "portrait",
     "primaryColor": "#cccccc",
-    "icon": "https://d1wp6m56sqw74a.cloudfront.net/~assets/c9aa1be8a6a6fe81e20c3ac4106a2ebc",
+    "icon": "./assets/icons/app-icon.png",
     "loading": {
-      "icon": "https://d1wp6m56sqw74a.cloudfront.net/~assets/c9aa1be8a6a6fe81e20c3ac4106a2ebc",
-      "hideExponentText": false
-    },
-    "packagerOpts": {
-      "assetExts": [
-        "ttf",
-        "mp4",
-        "otf",
-        "xml"
-      ]
+      "icon": "./assets/icons/app-icon.png",
+      "hideExponentText": true
     },
     "ios": {
+      "bundleIdentifier": "com.dangarfield.lazybeerstard",
       "supportsTablet": true
+    },
+    "android": {
+      "package": "com.dangarfield.lazybeerstard"
     }
   }
 }
