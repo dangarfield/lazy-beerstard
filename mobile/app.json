@@ -18,6 +18,8 @@
     },
     "android": {
       "package": "com.dangarfield.lazybeerstard",
+      "versionCode": 2,
+      "permissions": ["CAMERA", "ACCESS_COARSE_LOCATION", "ACCESS_FINE_LOCATION"],
       "config": {
         "googleMaps": {
           "apiKey": "AIzaSyD4ldg6Dpq5_KijGMTW_uIAa4cuoOO4lH0"
