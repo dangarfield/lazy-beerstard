@@ -178,7 +178,7 @@ class Results extends React.Component {
         <Card
           title='Generating map'>
           <Text style={styles.instructionsText}>
-            Looking for a {this.state.data.distance} route
+            Looking for a {this.state.data.distance} mile route
           </Text>
         </Card>
       </View>
@@ -296,10 +296,10 @@ class Results extends React.Component {
   render() {
     return (
       <View style={styles.container}>
-        <ImageBackground
+        {/* <ImageBackground
             source={BG_IMAGE}
             style={styles.bgImage}
-          >
+          > */}
           {/* <Text>Results Screen</Text>
           <Text>Status: {this.state.status}</Text>
           <Text>Name: {this.state.name}</Text> */}
@@ -313,7 +313,7 @@ class Results extends React.Component {
           {this.state.status === 'error' && this.renderError()}
 
 
-        </ImageBackground>
+        {/* </ImageBackground> */}
       </View>
     );
   }
@@ -325,7 +325,13 @@ export const { width, height } = Dimensions.get('window')
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'white'
+    backgroundColor: '#1a1a1a',
+    justifyContent: 'center',
+    alignItems: 'center',
+    top: 0,
+    left: 0,
+    width,
+    height
   },
   map: {
     width: width,

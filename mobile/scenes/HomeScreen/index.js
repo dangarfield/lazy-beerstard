@@ -37,16 +37,22 @@ class ConnectScreen extends React.Component<Props> {
   componentWillMount() {
     this.checkPermissions()
   }
-  checkPermissions() {
-    this.checkCameraPermission()
-    this.checkLocationPermission()
+  async checkPermissions() {
+    var camPerm = await this.checkCameraPermission()
+    console.log('camPerm', camPerm)
+    if(camPerm) {
+      await this.checkLocationPermission()
+    }
   }
   async checkCameraPermission() {
+    console.log('hasCameraPermission:', 'ASKED')
     const { status } = await Permissions.askAsync(Permissions.CAMERA)
     this.setState({ hasCameraPermission: status === 'granted' })
     console.log('hasCameraPermission:', status)
+    return status === 'granted'
   }
   async checkLocationPermission() {
+    console.log('hasCameraPermission:', 'ASKED')
     const { status } = await Permissions.askAsync(Permissions.LOCATION)
     console.log('hasLocationPermission:', status)
     this.setState({ hasLocationPermission: status === 'granted' })
@@ -65,10 +71,10 @@ class ConnectScreen extends React.Component<Props> {
     console.log('Permissions', hasCameraPermission, hasLocationPermission, locationServicesEnabled, allPermissionsGranted)
     return (
       <View style={styles.container}>
-        <ImageBackground
+        {/* <ImageBackground
           source={BG_IMAGE}
           style={styles.bgImage}
-        >
+        > */}
         <SwiperFlatList
           index={0}
           showPagination
@@ -122,31 +128,34 @@ class ConnectScreen extends React.Component<Props> {
             <Card
               title='Instructions'>
               <Text style={styles.instructionsText}>
-                Instructions for the app
+                Enable permissions for the app - We need to use your camera to take a photo of the beer, and location services to create a map around your current position
               </Text>
               <Text style={styles.instructionsText}>
-                Instructions for the app
+                Take a photo of your beer
               </Text>
               <Text style={styles.instructionsText}>
-                Instructions for the app
+                We'll then generate a map showing how far you ahve to walk to burn off those calories
+              </Text>
+              <Text style={styles.instructionsText}>
+                Have a wander then come back for a guilt free beer!
               </Text>
             </Card>
           </View>
         </SwiperFlatList>
-        </ImageBackground>
+        {/* </ImageBackground> */}
       </View>
     )
   }
 }
 export const { width, height } = Dimensions.get('window')
 const BG_IMAGE = require('../../assets/images/bg_abstract1.jpg')
-const LOGO_IMAGE = require('../../assets/images/kittenImage.png')
+const LOGO_IMAGE = require('../../assets/images/logo_text.png')
 
 const $colorWhite = '#fff'
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'white'
+    backgroundColor: '#1a1a1a'
   },
   child: {
     height,
@@ -167,7 +176,7 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
   logo: {
-    marginBottom: 20
+    marginBottom: 10
   },
   instructionsText: {
     marginBottom: 10
@@ -175,6 +184,17 @@ const styles = StyleSheet.create({
   permissionsText: {
     margin: 10,
     color: 'white'
+  },
+  titleText: {
+    margin: 0,
+    color: '#F6EBA7',
+    fontSize: 40,
+    fontFamily: 'Roboto'
+  },
+  subtitleText: {
+    margin: 10,
+    color: '#F6EBA7',
+    fontSize: 20
   }
 })
 export default ConnectScreen

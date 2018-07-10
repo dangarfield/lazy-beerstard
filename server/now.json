@@ -6,6 +6,6 @@
         "LAZY_BEERSTARD_AWS_REGION": "eu-west-1",
         "LAZY_BEERSTARD_AWS_ACCESS": "@lazy_beerstard_aws_access",
         "LAZY_BEERSTARD_AWS_SECRET": "@lazy_beerstard_aws_secret",
-        "LAZY_BEERSTARD_PORT": 5000
+        "LAZY_BEERSTARD_PORT": "5000"
     }
 }
