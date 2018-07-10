@@ -169,7 +169,7 @@ function getCaloriesOnline (name) {
         var foodText = $(elem).find('.nutritional_info').text().split(',')
         var foodSize = foodText[0].replace('Serving Size:', '').trim().toLowerCase()
         var foodCalories = Number(foodText[1].replace('Calories:', '').trim())
-        if (foodSize.includes('pint')) {
+        if (foodSize.includes('pint') || foodSize.includes('glass') || foodSize.includes('bottle')) {
           console.log(i, html, foodText, '-', foodName, '-', foodSize, '-', foodCalories)
           beerListCompare.push(foodName.toLowerCase())
           beerList.push({name: foodName, size: foodSize, calories: foodCalories})
@@ -198,7 +198,7 @@ async function detectCaloriesFromName (result) {
 
     var dbMatch = stringSimilarity.findBestMatch(name.toLowerCase(), beerListNames)
     console.log('dbMatch.bestMatch', dbMatch.bestMatch)
-    if (dbMatch.bestMatch.rating > 0.7) {
+    if (dbMatch.bestMatch.rating > 0.1) {
       console.log('Found calories from local db')
       var matchedBeer = beerListFlat.filter(beer => beer.synonym === dbMatch.bestMatch.target)[0]
       if (matchedBeer.calories !== undefined) {

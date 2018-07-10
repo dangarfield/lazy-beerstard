@@ -1,22 +1,30 @@
 [{
-        "name": "test",
-        "synonym": ["test"]
-    },
-    {
         "name": "Carlsberg",
         "synonym": ["carlsberg", "AE arlsbey"]
-    },
-    {
-        "name": "Budweiser",
-        "synonym": ["budweiser", "iser"]
     },
     {
         "name": "Guinness",
         "synonym": ["guiness extra cold"]
     },
     {
+        "name": "Heineken",
+        "synonym": ["heineken"]
+    },
+    {
         "name": "Punk IPA",
         "synonym": ["aunkls brew"]
+    },
+    {
+        "name": "Hobgoblin",
+        "synonym": ["hobgoblin"]
+    },
+    {
+        "name": "London Pride",
+        "synonym": ["london pride"]
+    },
+    {
+        "name": "Spitfire",
+        "synonym": ["spitfire"]
     },
     {
         "name": "Red Wine",
